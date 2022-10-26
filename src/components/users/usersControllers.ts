@@ -1,19 +1,30 @@
-import {Request, Response} from "express";
+import { Request, Response } from "express";
 import { users } from "../../mockData";
-import { IUser } from "./users_interfaces";
-import usersServices from "./users_services";
+import { IUser } from "./usersInterfaces";
+import usersServices from "./usersServices";
 
 const usersControllers = {
+    
+    //vaid admin saab näha
     getAllUsers: (req: Request, res: Response) => {
-        return res.status(200).json({
-            success: true,
-            message: 'Kasutajate nimekiri',
-            users,
-        });
+        const {isAdmin} = req.body;
+        if (isAdmin === "true"){
+            return res.status(200).json({
+                success: true,
+                message: 'Kasutajate nimekiri',
+                users,
+            })
+        } else {
+            return res.status(400).json({
+                success: false,
+                message: 'Ainult adminitele'
+            })
+        }
+        
     },
 
     createUser: (req: Request, res: Response) => {
-        const {firstName, lastName, email, password} = req.body;
+        const { firstName, lastName, email, password } = req.body;
         const id = users.length + 1;
         const newUser: IUser = {
             id,
@@ -21,6 +32,7 @@ const usersControllers = {
             lastName,
             email,
             password,
+            isAdmin: "false"
         };
         users.push(newUser);
         return res.status(201).json({
@@ -35,7 +47,7 @@ const usersControllers = {
             return element.id === id;
         });
         if (!user) {
-             return res.status(404).json({
+            return res.status(404).json({
                 success: false,
                 message: 'Kasutajat ei leitud'
             })
@@ -55,35 +67,43 @@ const usersControllers = {
     deleteUser: (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
         const result = usersServices.deleteUser(id);
-        if (!result) {
-             return res.status(404).json({
+        const {isAdmin} = req.body;
+        if (isAdmin === "true"){
+            if (!result) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Kasutajat ei leitud'
+                })
+            }
+            return res.status(201).json({
+                success: true,
+                message: `Kasutaja kustutatud`
+            });
+        } else {
+            return res.status(400).json({
                 success: false,
-                message: 'Kasutajat ei leitud'
+                message: 'Kasutajaid saab vaid admin kustutada'
             })
         }
-        return res.status(201).json({
-            success: true,
-            message: `Kasutaja kustutatud`
-        });
     },
 
     changeUserData: (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
-        const {firstName, lastName, email, password} = req.body;
+        const { firstName, lastName, email, password } = req.body;
         const user = users.find(element => {
             return element.id === id;
         });
         if (!user) {
-             return res.status(404).json({
+            return res.status(404).json({
                 success: false,
                 message: 'Kasutajat ei leitud'
             })
         }
         if (!firstName && !lastName && !email && !password) {
             return res.status(400).json({
-               success: false,
-               message: 'Midagi pole muuta'
-           })
+                success: false,
+                message: 'Midagi pole muuta'
+            })
         }
 
         const userToChangeData: IUser = {
@@ -91,13 +111,14 @@ const usersControllers = {
             firstName,
             lastName,
             email,
-            password
+            password,
+            isAdmin: "false"
         }
 
         usersServices.changeUserData(userToChangeData);
-       
-    
-    
+
+
+
         return res.status(200).json({
             success: true,
             message: `Kasutaja andmed muudetud`,

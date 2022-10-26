@@ -1,6 +1,6 @@
-import { IUser } from "./components/users/users_interfaces";
-import { IPost } from "./components/posts/posts_interfaces";
-import { IComment } from "./components/comments/comments_interfaces";
+import { IUser } from "./components/users/usersInterfaces";
+import { IPost } from "./components/posts/postsInterfaces";
+import { IComment } from "./components/comments/commentsInterfaces";
 
 //hardcoded kasutajad
 const users: IUser[] = [
@@ -9,7 +9,9 @@ const users: IUser[] = [
         firstName: 'John',
         lastName: 'Root',
         email: 'jroot@tlu.ee',
-        password: 'juhan123'
+        //password: 'juhan123',
+        password: '$2a$11$NR.hBSwRq42MlU8dw5tQo.QUB..nOzy89u4.lomSiB4jhBBDcXs4e',
+        isAdmin: "false"
     },
 
     {
@@ -17,8 +19,22 @@ const users: IUser[] = [
         firstName: 'Matt',
         lastName: 'Straw',
         email: 'laststraw@tlu.ee',
-        password: 'laststraw123'
+        //password: 'laststraw123',
+        password: '$2a$11$VcsTe3kv3f5et1VtWT/YUuCULjDsVi4KAGyBQ5vtMN6snIilj4m.u',
+        isAdmin: "false"
+    },
+    
+    {
+        //admin
+        id: 3,
+        firstName: 'James',
+        lastName: 'Hill',
+        email: 'jhillt@tlu.ee',
+        //password: 'jamesiam',
+        password: '$2a$11$DJ9qXwQ2i1SZ.8qx4isdl.wu3wjgOMqYc5qSr6y5UGGNpTYy6r29O',
+        isAdmin: "true"
     }
+    
 ];
 
 //hardcoded postitused

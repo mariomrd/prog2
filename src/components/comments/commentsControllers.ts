@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import commentsServices from "./comments_services";
-import usersServices from "../users/users_services";
+import commentsServices from "./commentsServices";
+import usersServices from "../users/usersServices";
 import { comments, posts } from "../../mockData";
-import { IComment } from "./comments_interfaces";
-import { IUserWithPassword } from "../users/users_interfaces";
+import { IComment } from "./commentsInterfaces";
+import { IUser} from "../users/usersInterfaces";
 
 const commentsControllers = {
     getCommentsByPostId: (req: Request, res: Response) => {
@@ -87,13 +87,14 @@ const commentsControllers = {
 
     getAllComments: (req: Request, res: Response) => {
         const commentsWithUsers = comments.map(comment => {
-            let user: IUserWithPassword | undefined = usersServices.userById(comment.id);
-            if (!user) user = user = {
+            let user: IUser | undefined = usersServices.userById(comment.id);
+            if (!user) user = {
                 id: 0,
                 firstName: 'User missing',
                 lastName: 'User missing',
                 email: 'User missing',
-                password: 'User missing'
+                password: 'User missing',
+                isAdmin: "false"
             };
             const commentWithUser = {
                 id: comment.id,
