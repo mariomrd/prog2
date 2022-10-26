@@ -1,5 +1,5 @@
 import { comments } from "../../mockData";
-import { IComment } from "./comments_interfaces";
+import { IComment } from "./commentsInterfaces";
 
 const commentsServices = {
 

@@ -1,5 +1,3 @@
-
-
 interface INewComment {
     userId: number;
     postId: number;

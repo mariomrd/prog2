@@ -1,10 +1,10 @@
 import { users } from "../../mockData";
-import { IUser, IUserWithPassword } from "./users_interfaces";
+import { IUser, IUserWithoutPasswordAndRole } from "./usersInterfaces";
 
 
 
 const usersServices = {
-    userById: (id: number): IUserWithPassword | undefined => {
+    userById: (id: number): IUser | undefined => {
         const user = users.find(element => {
             element.id = id;
         });
@@ -27,7 +27,11 @@ const usersServices = {
         if(index === -1) return false;
         users.splice(index, 1);
         return true;
-    }
+    },
+    findUserByEmail: (email: string): IUser | undefined => {
+        const user: IUser | undefined = users.find((element) => element.email === email);
+        return user;
+      },
 
 }
 

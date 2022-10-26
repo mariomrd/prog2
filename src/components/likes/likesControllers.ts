@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { posts, users } from "../../mockData";
-import { IUser } from "../users/users_interfaces";
+import { IUserWithoutRole } from "../users/usersInterfaces";
 
 const likesControllers = {
     likePost: (req: Request, res: Response) => {
@@ -14,7 +14,7 @@ const likesControllers = {
                 message: 'Postitatud pilti ei leitud'
             })
         }
-        let user: IUser | undefined = users.find(element => element.id === post.userId);
+        let user: IUserWithoutRole | undefined = users.find(element => element.id === post.userId);
         if (!user) {
             user = {
                 id: 0,
@@ -57,7 +57,7 @@ const likesControllers = {
                 message: 'Postitatud pilti ei leitud'
             })
         }
-        let user: IUser | undefined = users.find(element => element.id === post.userId);
+        let user: IUserWithoutRole | undefined = users.find(element => element.id === post.userId);
         if (!user) {
             user = {
                 id: 0,
