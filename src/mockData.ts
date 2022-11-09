@@ -11,7 +11,7 @@ const users: IUser[] = [
         email: 'jroot@tlu.ee',
         //password: 'juhan123',
         password: '$2a$11$NR.hBSwRq42MlU8dw5tQo.QUB..nOzy89u4.lomSiB4jhBBDcXs4e',
-        isAdmin: "false"
+        isAdmin: "true"
     },
 
     {

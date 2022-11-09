@@ -4,7 +4,9 @@ import generalController from './generalControllers';
 const generalRoutes = express.Router();
 
 generalRoutes
-  .get('/', generalController.health);
+  .get('/', generalController.index)
+  .get('/health', generalController.health)
+  //.get('/*',generalController.default);
 
 
 
