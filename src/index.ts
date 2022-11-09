@@ -14,10 +14,15 @@ const app = express();
 const PORT = 3000;
 const apiPath = '/api/v1';
 
+//mida vaja teha
+//uues kasutaja registreermisel ei peaks olema vaja sisse logitud olla
+//parooli muutmisel kasutaja muutmise all hashiks selle ära ka
+// kolmas kodutöö mrt https://github.com/tluhk/Programmeerimine-II/releases/tag/0.3.0
+
 app.use(express.json());
 app.use(logger);
+app.use(`${apiPath}/`, logger, generalRoutes);
 app.post(`${apiPath}/login`, loginLogger, authController.login);
-app.use(`${apiPath}/health`, logger, generalRoutes);
 app.use(authMiddleware.isLoggedIn);
 app.use(`${apiPath}/users`, usersRoutes);
 app.use(`${apiPath}/posts`, likesRoutes);
@@ -28,9 +33,6 @@ app.post(`${apiPath}/`, loginLogger, usersMiddlewares.checkCreateUserData, users
 
 
 
-
-// PORT 
-
-app.listen(PORT, () => {
-    console.log('Server is running');
+const server = app.listen(PORT, () => { //port peaks päris äpis olema environment variables alt võetud
+    console.log('Server is running on port 3000');
 })

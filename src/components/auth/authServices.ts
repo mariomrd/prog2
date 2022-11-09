@@ -20,7 +20,7 @@ const authServices = {
       email: user.email,
       isAdmin: user.isAdmin,
     };
-    const token = await jwt.sign(payload, jwtSecret, { expiresIn: '2h' });
+    const token = await jwt.sign(payload, jwtSecret, { expiresIn: '24h' });
     return token;
   },
   verify: async (token: string) => {

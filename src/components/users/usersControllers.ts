@@ -1,43 +1,46 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { users } from "../../mockData";
-import { IUser } from "./usersInterfaces";
+import authServices from "../auth/authServices";
+import { INewUser, IUser, IUserWithoutRole } from "./usersInterfaces";
 import usersServices from "./usersServices";
 
 const usersControllers = {
+
+    //vaid admin näeb kõiki kasutajaid
+    getAllUsers: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+          let users;
+          if (res.locals.user.isAdmin === 'true') {
+            users = await usersServices.getAllUsers();
+          } else {
+            const { id } = res.locals.user;
+            users = usersServices.finduserById(id);
+          }
     
-    //vaid admin saab näha
-    getAllUsers: (req: Request, res: Response) => {
-        const {isAdmin} = req.body;
-        if (isAdmin === "true"){
-            return res.status(200).json({
-                success: true,
-                message: 'Kasutajate nimekiri',
-                users,
-            })
-        } else {
-            return res.status(400).json({
-                success: false,
-                message: 'Ainult adminitele'
-            })
+          return res.status(200).json({
+            success: true,
+            message: 'List of users',
+            users,
+          });
+        } catch (error) {
+          next(error);
         }
         
-    },
+      },
 
-    createUser: (req: Request, res: Response) => {
+    createUser: async (req: Request, res: Response) => {
         const { firstName, lastName, email, password } = req.body;
-        const id = users.length + 1;
-        const newUser: IUser = {
-            id,
+        const newUser: INewUser = {
             firstName,
             lastName,
             email,
             password,
-            isAdmin: "false"
+            isAdmin: 'false'
         };
-        users.push(newUser);
+        const id = await usersServices.createUser(newUser);
         return res.status(201).json({
             success: true,
-            message: `Kasutaja e-mailiga ${newUser.email} ja IDga ${newUser.id} loodud`
+            message: `Kasutaja e-mailiga ${newUser.email} ja IDga ${id} loodud`
         });
     },
 
@@ -106,13 +109,12 @@ const usersControllers = {
             })
         }
 
-        const userToChangeData: IUser = {
+        const userToChangeData: IUserWithoutRole = {
             id,
             firstName,
             lastName,
             email,
-            password,
-            isAdmin: "false"
+            password
         }
 
         usersServices.changeUserData(userToChangeData);

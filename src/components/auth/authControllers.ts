@@ -8,7 +8,7 @@ const authController = {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Some data is missing (email, password)',
+        message: 'Email või password on puudu)',
       });
     }
     const user = await usersServices.findUserByEmail(email);
@@ -22,14 +22,16 @@ const authController = {
     if (!match) {
       return res.status(401).json({
         success: false,
-        message: 'Wrong password',
+        message: 'Vale parool',
       });
     }
+
     const token = await authServices.sign(user);
+
     return res.status(200).json({
       success: true,
-      message: 'token',
-      token,
+      message: 'Token',
+      token
     });
   },
 };

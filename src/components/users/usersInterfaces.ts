@@ -1,3 +1,5 @@
+import { RowDataPacket } from 'mysql2';
+
 interface INewUser{
     firstName: string;
     lastName: string;
@@ -10,11 +12,16 @@ interface IUser extends INewUser {
     id: number;
 }
 
-interface IUserWithoutPasswordAndRole {
-    id: number;
+interface INewUserSQL{
     firstName: string;
     lastName: string;
     email: string;
+    password: string;
+    isAdmin: 'false' | 'true';
+}
+
+interface IUserSQL extends INewUserSQL, RowDataPacket {
+    id: number;
 }
 
 interface IUserWithoutPassword {
@@ -22,7 +29,7 @@ interface IUserWithoutPassword {
     firstName: string;
     lastName: string;
     email: string;
-    isAdmin: 'false';
+    isAdmin: 'false' | 'true';
 }
 
 interface IUserWithoutRole {
@@ -34,4 +41,4 @@ interface IUserWithoutRole {
 }
 
 
-export { INewUser, IUser, IUserWithoutPassword, IUserWithoutPasswordAndRole, IUserWithoutRole};
+export { INewUser, IUser, IUserWithoutPassword, IUserWithoutRole, INewUserSQL, IUserSQL};

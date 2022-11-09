@@ -3,7 +3,8 @@ import commentsServices from "./commentsServices";
 import usersServices from "../users/usersServices";
 import { comments, posts } from "../../mockData";
 import { IComment } from "./commentsInterfaces";
-import { IUser} from "../users/usersInterfaces";
+import { IUser, IUserSQL } from "../users/usersInterfaces";
+import { RowDataPacket } from "mysql2";
 
 const commentsControllers = {
     getCommentsByPostId: (req: Request, res: Response) => {
@@ -45,7 +46,7 @@ const commentsControllers = {
             content,
         };
         comments.push(comment);
-    
+
         return res.status(201).json({
             success: true,
             message: `Kommentaar IDga ${comment.id} loodud`,
@@ -85,32 +86,18 @@ const commentsControllers = {
         });
     },
 
-    getAllComments: (req: Request, res: Response) => {
-        const commentsWithUsers = comments.map(comment => {
-            let user: IUser | undefined = usersServices.userById(comment.id);
-            if (!user) user = {
-                id: 0,
-                firstName: 'User missing',
-                lastName: 'User missing',
-                email: 'User missing',
-                password: 'User missing',
-                isAdmin: "false"
-            };
-            const commentWithUser = {
-                id: comment.id,
-                content: comment.content,
-                user: {
-                    firstName: user.firstName,
-                    lastName: user.lastName
-                }
-            };
-            return commentWithUser;
+    getAllComments: async (req: Request, res: Response) => {
+        const comments = await commentsServices.getAllComments();
+        res.status(200).json({
+            success: true,
+            message: 'List of all comments',
+            comments,
         });
-    
+
         res.status(200).json({
             success: true,
             message: 'Kõik kommentaarid',
-            comments: commentsWithUsers,
+            comments
         });
     }
 
