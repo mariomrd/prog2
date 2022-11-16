@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { IUser } from '../users/usersInterfaces';
+import { IUser, IUserSQL } from '../users/usersInterfaces';
 import config from '../../apiConfig';
 
 const { saltRounds, jwtSecret } = config;
@@ -14,7 +14,7 @@ const authServices = {
     const match = await bcrypt.compare(password, hash);
     return match;
   },
-  sign: async (user: IUser): Promise<string> => {
+  sign: async (user: IUserSQL): Promise<string> => {
     const payload = {
       id: user.id,
       email: user.email,

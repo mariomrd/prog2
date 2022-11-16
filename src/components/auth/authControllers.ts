@@ -8,7 +8,7 @@ const authController = {
     if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Email või password on puudu)',
+        message: 'Email või password on puudu',
       });
     }
     const user = await usersServices.findUserByEmail(email);
