@@ -1,53 +1,21 @@
 import { NextFunction, Request, Response } from "express";
-import { users } from "../../mockData";
+//import { users } from "../../mockData";
 import authServices from "../auth/authServices";
-import { INewUser, IUser, IUserWithoutRole } from "./usersInterfaces";
+import { IUser, INewUser, IUserWithoutRole, INewUserSQL } from "./usersInterfaces";
 import usersServices from "./usersServices";
 
 const usersControllers = {
 
     //vaid admin näeb kõiki kasutajaid
-    getAllUsers: async (req: Request, res: Response, next: NextFunction) => {
-        try {
-          let users;
-          if (res.locals.user.isAdmin === 'true') {
-            users = await usersServices.getAllUsers();
-            console.log("ifadmin:", users)
-            
-          } else {
-            const { id } = res.locals.user;
-            users = usersServices.findUserById(id);
-            console.log('getalluserscontroller:', users);
-            console.log("isadmin:", res.locals.user.isAdmin); // miks undefined?
-          }
-    
-          return res.status(200).json({
+    getAllUsers: async (req: Request, res: Response, next: NextFunction): Promise<any> =>  {
+        const users = await usersServices.getAllUsers();
+        res.status(200).json({
             success: true,
             message: 'List of users',
             users
-          });
-        } catch (error) {
-          next(error);
-        }
-        
-      },
-
-    createUser: async (req: Request, res: Response) => {
-        const { firstName, lastName, email, password } = req.body;
-        const newUser: INewUser = {
-            firstName,
-            lastName,
-            email,
-            password,
-            isAdmin: 'false'
-        };
-        const id = await usersServices.createUser(newUser);
-        return res.status(201).json({
-            success: true,
-            message: `Kasutaja e-mailiga ${newUser.email} ja IDga ${id} loodud`
+            
         });
-    },
-
+      },
     getUserById: async (req: Request, res: Response, next: NextFunction) => {
         try {
             const id = parseInt(req.params.id, 10);
@@ -67,11 +35,11 @@ const usersControllers = {
         },
 
         //ümber teha
-    deleteUser: (req: Request, res: Response) => {
+    /*deleteUser: (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
         const result = usersServices.deleteUser(id);
-        const {isAdmin} = req.body;
-        if (isAdmin === "true"){
+        const {role} = req.body;
+        if (role === "admin"){
             if (!result) {
                 return res.status(404).json({
                     success: false,
@@ -88,9 +56,9 @@ const usersControllers = {
                 message: 'Kasutajaid saab vaid admin kustutada'
             })
         }
-    },
+    },*/
 
-    changeUserData: (req: Request, res: Response) => {
+    /*changeUserData: (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
         const { firstName, lastName, email, password } = req.body;
         const user = users.find(element => {
@@ -124,15 +92,15 @@ const usersControllers = {
         return res.status(200).json({
             success: true,
             message: `Kasutaja andmed muudetud`,
-            /*data: {
+            data: {
                 id: user.id,
                 firstName: user.firstName,
                 lastName: user.lastName,
                 email: user.email
-            }*/
+            }
         });
-    }
-
+        
+    }*/
 }
 
 

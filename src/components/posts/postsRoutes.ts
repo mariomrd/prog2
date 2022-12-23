@@ -6,10 +6,10 @@ const postsRoutes = express.Router();
 
 postsRoutes
     .get('/', postsControllers.getAllPosts)
-    .get('/:id', postsControllers.getPostByID)
+    .get('/:id', postsControllers.getPostById)
     .post('/', postsMiddlewares.checkCreatePost, postsControllers.createPost)
-    .delete('/:id', postsControllers.deletePost)
-    .patch('/:id', postsControllers.modifyPost)
+    //.delete('/:id', postsControllers.deletePost)
+    //.patch('/:id', postsControllers.modifyPost)
   
 
 

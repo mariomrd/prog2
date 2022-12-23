@@ -24,7 +24,7 @@ const authMiddleware = {
     return next();
   },
   isAdmin: (req: Request, res: Response, next: NextFunction) => {
-    if (res.locals.user.isAdmin === 'false') {
+    if (res.locals.user.role === 'user') {
       return res.status(401).json({
         success: false,
         message: 'You are not an admin'

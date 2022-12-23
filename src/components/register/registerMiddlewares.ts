@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
-const usersMiddlewares = {
-    /*checkCreateUserData: (req: Request, res: Response, next: NextFunction) => {
+const registerMiddlewares = {
+    checkCreateUserData: (req: Request, res: Response, next: NextFunction) => {
         const { firstName, lastName, email, password } = req.body;
         if (!firstName || !lastName || !email || !password) {
             return res.status(400).json({
@@ -28,7 +28,7 @@ const usersMiddlewares = {
 
         next();
     }
-*/
+    
 };
 
-export default usersMiddlewares;
+export default registerMiddlewares;

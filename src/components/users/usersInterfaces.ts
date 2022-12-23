@@ -5,7 +5,7 @@ interface INewUser{
     lastName: string;
     email: string;
     password: string;
-    isAdmin: 'false' | 'true';
+    role: 'admin' | 'user';
 }
 
 interface IUser extends INewUser {
@@ -17,7 +17,7 @@ interface INewUserSQL{
     lastName: string;
     email: string;
     password: string;
-    isAdmin: 'false' | 'true';
+    role: 'admin' | 'user';
 }
 
 interface IUserSQL extends INewUserSQL, RowDataPacket {
@@ -29,7 +29,7 @@ interface IUserWithoutPassword {
     firstName: string;
     lastName: string;
     email: string;
-    isAdmin: 'false' | 'true';
+    role: 'admin' | 'user';
 }
 
 interface IUserWithoutRole {

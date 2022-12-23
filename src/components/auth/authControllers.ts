@@ -20,6 +20,7 @@ const authController = {
     }
     const match = await authServices.compare(password, user.password);
     if (!match) {
+      //console.log(password, user.password)
       return res.status(401).json({
         success: false,
         message: 'Vale parool',

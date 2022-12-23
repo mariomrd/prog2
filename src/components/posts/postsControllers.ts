@@ -1,78 +1,61 @@
-import { Request, Response } from "express";
-import { posts, users } from "../../mockData";
+import { NextFunction, Request, Response } from "express";
+import { FieldPacket, ResultSetHeader } from 'mysql2';
+//import { posts, users } from "../../mockData";
 import { IUserWithoutRole } from "../users/usersInterfaces";
-import { IPost } from "./postsInterfaces";
+import { INewPost, INewPostSQL, IPost, IPostSQL } from "./postsInterfaces";
+import postsServices from "./postsServices";
 
 const postsControllers = {
-    getAllPosts: (req: Request, res: Response) => {
-        return res.status(200).json({
+    getAllPosts: async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+        const posts = await postsServices.getAllPosts();
+        res.status(200).json({
             success: true,
-            message: 'postituste nimekiri',
+            message: 'List of posts',
             posts
+
         });
     },
-    getPostByID: (req: Request, res: Response) => {
-        const id = parseInt(req.params.id);
-        const post = posts.find(element => {
-            return element.id === id;
-        });
-        if (!post) {
-             return res.status(404).json({
+    getPostById: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const id = parseInt(req.params.id, 10);
+            const post = await postsServices.findPostById(id);
+            //console.log("getuserPOSTidcontroller:", post)
+            if (!post) throw new Error('Post not found');
+            return res.status(200).json({
+                success: true,
+                message: `Post with id ${id}`,
+                data: {
+                    post
+                }
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+    createPost: async (req: Request, res: Response) => {
+        const {
+            title, description,} = req.body;
+        const userId = res.locals.user?.id;
+        if (!title || !description || !userId) {
+            return res.status(400).json({
                 success: false,
-                message: 'Postitatud pilti ei leitud'
-            })
+                message: 'Pealkiri, sisu või kasutaja id on puudu',
+            });
         }
-        let user: IUserWithoutRole | undefined = users.find(element => element.id === post.userId);
-        if (!user) {
-            user = {
-                id: 0,
-                firstName: 'User missing',
-                lastName: 'User missing',
-                email: 'User missing',
-                password: 'User missing'
-            }
-        }
-        const postWithUserName = {
-            id: post.id,
-            title: post.title,
-            description: post.description,
-            picture: post.picture,
-            user: {
-                id: user.id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-            },
-            score: post.score,
-        }
-        return res.status(201).json({
-            success: true,
-            message: `Postitus IDga ${id} on leitud`,
-            data: {
-                post: postWithUserName
-            }
-        });
-    },
-
-    createPost: (req: Request, res: Response) => {
-        const { title, description, picture, userId, score } = req.body;
-        const id = posts.length + 1;
-        const newPost: IPost = {
-            id,
-            title,
+        const newPost: INewPostSQL = {
             userId,
+            title,
             description,
-            picture,
-            score,
+            location: "wtf"
         };
-        posts.push(newPost);
+        const id = await postsServices.createPost(newPost);
         return res.status(201).json({
             success: true,
-            message: `Postitus pealkirjaga '${newPost.title}' ja IDga ${newPost.id} on loodud.`
+            message: `Post with id ${id} created`,
         });
     },
 
-    modifyPost: (req: Request, res: Response) => {
+    /*modifyPost: (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
         const {title, description, picture} = req.body;
         const post = posts.find(element => {
@@ -94,8 +77,8 @@ const postsControllers = {
         if (description) post.description = description;
         if (picture) post.picture = picture;
        
-    
-    
+     
+     
         return res.status(201).json({
             success: true,
             message: `postitus muudetud`,
@@ -107,7 +90,7 @@ const postsControllers = {
             }
         });
     },
-
+    
     deletePost: (req: Request, res: Response) => {
         const id = parseInt(req.params.id);
         const index = posts.findIndex(element => element.id === id);
@@ -123,6 +106,6 @@ const postsControllers = {
             message: `Postitus kustutatud`
         });
     }
-}
-
+    }*/
+};
 export default postsControllers;

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+/*import { Request, Response } from "express";
 import { posts, users } from "../../mockData";
 import { IUserWithoutRole } from "../users/usersInterfaces";
 
@@ -90,4 +90,4 @@ const likesControllers = {
     }
 }
 
-export default likesControllers;
+export default likesControllers;*/

@@ -1,34 +1,37 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import commentsServices from "./commentsServices";
 import usersServices from "../users/usersServices";
-import { comments, posts } from "../../mockData";
+//import { comments, posts } from "../../mockData";
 import { IComment } from "./commentsInterfaces";
 import { IUser, IUserSQL } from "../users/usersInterfaces";
 import { RowDataPacket } from "mysql2";
 
 const commentsControllers = {
-    getCommentsByPostId: (req: Request, res: Response) => {
-        const postId = parseInt(req.params.id);
-        const comments = commentsServices.commentsByPostId(postId);
-        const post = posts.find(element => {
-            return element.id === postId;
-        });
-        if (!post) {
-            return res.status(400).json({
-                success: false,
-                message: `Sellist postitust pole olemas`,
+    /*getCommentsByPostId: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const id = parseInt(req.params.id, 10);
+            const comments = await commentsServices.commentsByPostId(id);
+            console.log("kas siia")
+            if (!comments) {
+                return res.status(400).json({
+                    success: false,
+                    message: `Sellist postitust pole olemas`,
+                });
+            }
+            return res.status(200).json({
+                success: true,
+                message: `Postitusega ${id} seotud kommentaarid`,
+                data: {
+                    comments,
+                },
             });
+        } catch (error) {
+            next(error)
         }
-        return res.status(200).json({
-            success: true,
-            message: `Postitusega ${postId} seotud kommentaarid`,
-            data: {
-                comments,
-            },
-        });
-    },
+    },*/
 
-    createComment: (req: Request, res: Response) => {
+
+    /*createComment: (req: Request, res: Response) => {
         const { postId, content } = req.body;
         let { userId } = req.body;
         if (!postId || !content) {
@@ -46,7 +49,7 @@ const commentsControllers = {
             content,
         };
         comments.push(comment);
-
+    
         return res.status(201).json({
             success: true,
             message: `Kommentaar IDga ${comment.id} loodud`,
@@ -66,38 +69,35 @@ const commentsControllers = {
             success: true,
             message: `Kommentaar kustutatud`,
         });
-    },
+    },*/
 
-    getCommentByCommentId: (req: Request, res: Response) => {
-        const id = parseInt(req.params.id);
-        const comment = commentsServices.commentById(id);
-        if (!comment) {
-            return res.status(404).json({
-                success: false,
-                message: `Kommentaari ei leitud`,
+    getCommentByCommentId: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const id = parseInt(req.params.id, 10);
+            const comment = await commentsServices.commentById(id);
+            if (!comment) {
+                return res.status(404).json({
+                    success: false,
+                    message: `Kommentaari ei leitud`,
+                });
+            }
+            return res.status(200).json({
+                success: true,
+                message: `Kommentaar IDga ${id} leitud`,
+                data: { comment }
             });
+        } catch (error) {
+            next(error)
         }
-        return res.status(200).json({
-            success: true,
-            message: `Kommentaar IDga ${id} leitud`,
-            data: {
-                comment,
-            },
-        });
     },
 
-    getAllComments: async (req: Request, res: Response) => {
+    getAllComments: async (req: Request, res: Response): Promise<any> => {
         const comments = await commentsServices.getAllComments();
+        const slicedComments = comments.slice(0, 25);
         res.status(200).json({
             success: true,
-            message: 'List of all comments',
-            comments,
-        });
-
-        res.status(200).json({
-            success: true,
-            message: 'Kõik kommentaarid',
-            comments
+            message: 'List of all comments/ 25 firstones',
+            comments: slicedComments
         });
     }
 

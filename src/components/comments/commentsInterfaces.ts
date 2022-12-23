@@ -15,7 +15,7 @@ interface INewCommentSQL {
     content: string;
 }
 
-interface ICommentSQL extends INewCommentSQL, RowDataPacket {
+interface ICommentSQL extends INewCommentSQL, RowDataPacket {/*  */
     id: number;
 }
 

@@ -1,4 +1,4 @@
-import express from 'express';
+/*import express from 'express';
 import likesControllers from './likesControllers';
 
 const likesRoutes = express.Router();
@@ -8,4 +8,4 @@ likesRoutes
   .post('/:id/dislike', likesControllers.disLikePost)
 
 
-export default likesRoutes;
+export default likesRoutes;*/
