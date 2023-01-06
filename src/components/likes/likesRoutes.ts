@@ -5,7 +5,7 @@ const likesRoutes = express.Router();
 
 likesRoutes
   .post('/:id/like', likesControllers.likePost)
-  .post('/:id/dislike', likesControllers.disLikePost)
+  .post('/:id/unlike', likesControllers.unlikePost)
 
 
 export default likesRoutes;

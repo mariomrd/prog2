@@ -1,16 +1,30 @@
+import { RowDataPacket } from "mysql2";
 
 
 interface INewPost {
     userId: number;
     title: string;
     description: string;
-    picture: string;
-    score: number;
+    location: string;
 }
 
 interface IPost extends INewPost {
     id: number;
 }
 
+interface INewPostSQL {
+    userId: number;
+    title: string;
+    description: string;
+    location: string;
+    creation_time?: string;
+    deletedDate?: string
+}
 
-export {INewPost, IPost};
+interface IPostSQL extends INewPostSQL, RowDataPacket {
+    id: number;
+}
+
+
+
+export {INewPost, IPost, INewPostSQL, IPostSQL};

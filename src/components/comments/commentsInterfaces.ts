@@ -7,7 +7,7 @@ interface INewComment {
 }
 
 interface IComment extends INewComment {
-    id: number;
+    id?: number;
 }
 interface INewCommentSQL {
     userId: number;
@@ -15,7 +15,7 @@ interface INewCommentSQL {
     content: string;
 }
 
-interface ICommentSQL extends INewCommentSQL, RowDataPacket {
+interface ICommentSQL extends INewCommentSQL, RowDataPacket {/*  */
     id: number;
 }
 

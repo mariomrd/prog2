@@ -4,9 +4,8 @@ import { describe, it } from 'mocha';
 import app from '../src/app';
 
 const userAdmin = {
-    email: 'jroot@tlu.ee',
-    password: 'juhan123',
-    isAdmin: "true"
+    email: 'juhan@tlu.ee',
+    password: 'juhan123'
 };
 
 const userFake = {

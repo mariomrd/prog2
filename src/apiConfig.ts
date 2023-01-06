@@ -4,9 +4,9 @@ const config = {
     saltRounds: 10,
     apiPath : '/api/v1',
     db: {
-      user: 'mario',
+      user: 'Mario',
       password: 'marioApp123',
-      database: 'petagram',
+      database: 'petagramv1',
       host: 'localhost',
       port: 3306
     }

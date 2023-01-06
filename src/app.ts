@@ -1,4 +1,10 @@
-import express from 'express'; 
+import express from 'express';
+import cors from "cors";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
+import session from "express-session";
+
+import config from './apiConfig';
 import usersRoutes from './components/users/usersRoutes';
 import likesRoutes from './components/likes/likesRoutes';
 import postsRoutes from './components/posts/postsRoutes';
@@ -6,30 +12,40 @@ import commentsRoutes from './components/comments/commentsRoutes';
 import generalRoutes from './components/general/generalRoutes';
 import { logger, loginLogger, } from './components/general/generalMiddlewares';
 import authController from './components/auth/authControllers';
-import usersMiddlewares from './components/users/usersMiddlewares';
-import usersControllers from './components/users/usersControllers';
 import authMiddleware from './components/auth/authMiddlewares';
-import config from './apiConfig';
+import registerRoutes from './components/register/registerRoutes';
+
 
 const app = express();
 const { apiPath } = config;
 
-//mida vaja teha
-//uues kasutaja registreermisel ei peaks olema vaja sisse logitud olla
-//parooli muutmisel kasutaja muutmise all hashiks selle ära ka
-// kolmas kodutöö mrt https://github.com/tluhk/Programmeerimine-II/releases/tag/0.3.0
-
 app.use(express.json());
-//app.use(logger);
-//app.use(`${apiPath}/`, logger, generalRoutes);
+app.use(cors({
+    origin: ["http://localhost:9000"],
+    methods: ["GET", "POST"],
+    credentials: true
+}));
+app.use(cookieParser());
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(session({
+    secret: config.jwtSecret,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: true
+    }
+}))
+app.use(logger);
+app.use(`${apiPath}/`, logger, generalRoutes);
 app.use(`${apiPath}/health`, logger, generalRoutes);
-app.post(`${apiPath}/login`, loginLogger, authController.login);
+app.use(`${apiPath}/register`, registerRoutes);
+app.use(`${apiPath}/login`, loginLogger, authController.login); //panin use
 app.use(authMiddleware.isLoggedIn);
 app.use(`${apiPath}/users`, usersRoutes);
 app.use(`${apiPath}/posts`, likesRoutes);
 app.use(`${apiPath}/posts`, postsRoutes);
-app.use(`${apiPath}/`, commentsRoutes);
-app.post(`${apiPath}/`, loginLogger, usersMiddlewares.checkCreateUserData, usersControllers.createUser);
+app.use(`${apiPath}/comments`, commentsRoutes);
+/* app.post(`${apiPath}/`, loginLogger, usersMiddlewares.checkCreateUserData, usersControllers.createUser); */
 
 export default app;
 

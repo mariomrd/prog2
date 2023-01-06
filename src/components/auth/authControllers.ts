@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import authServices from "./authServices";
 import usersServices from "../users/usersServices";
+import session from "express-session";
 
 const authController = {
   login: async (req: Request, res: Response) => {
@@ -20,6 +21,7 @@ const authController = {
     }
     const match = await authServices.compare(password, user.password);
     if (!match) {
+      //console.log(password, user.password)
       return res.status(401).json({
         success: false,
         message: 'Vale parool',
@@ -28,9 +30,10 @@ const authController = {
 
     const token = await authServices.sign(user);
 
+
     return res.status(200).json({
       success: true,
-      message: 'Token',
+      message: '༼ つ ◕◡◕ ༽つ Have this Token of my gratitude',
       token
     });
   },
