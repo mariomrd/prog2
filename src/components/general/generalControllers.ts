@@ -8,7 +8,7 @@ const generalController = {
   health: (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
-      message: `I'm healthy.`
+      message: `API is healthy.`
     });
   }/*,
   default: (req: Request, res: Response) => {

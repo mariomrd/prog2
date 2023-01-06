@@ -1,6 +1,6 @@
-import { IUser } from "./components/users/usersInterfaces";
+/* import { IUser } from "./components/users/usersInterfaces";
 import { IPost } from "./components/posts/postsInterfaces";
-import { IComment } from "./components/comments/commentsInterfaces";
+import { IComment } from "./components/comments/commentsInterfaces"; */
 
 //hardcoded kasutajad
 /*const users: IUser[] = [

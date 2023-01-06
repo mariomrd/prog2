@@ -34,8 +34,8 @@ interface IUserWithoutPassword {
 
 interface IUserWithoutRole {
     id: number;
-    firstName: string;
-    lastName: string;
+    firstname: string;
+    lastname: string;
     email: string;
     password: string;
 }

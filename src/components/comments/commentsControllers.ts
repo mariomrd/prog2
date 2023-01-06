@@ -7,11 +7,11 @@ import { IUser, IUserSQL } from "../users/usersInterfaces";
 import { RowDataPacket } from "mysql2";
 
 const commentsControllers = {
-    /*getCommentsByPostId: async (req: Request, res: Response, next: NextFunction) => {
+    getCommentsByPostId: async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const id = parseInt(req.params.id, 10);
-            const comments = await commentsServices.commentsByPostId(id);
-            console.log("kas siia")
+            const postId = parseInt(req.params.id, 10);
+            console.log(req.params);
+            const comments = await commentsServices.commentsByPostId(postId);
             if (!comments) {
                 return res.status(400).json({
                     success: false,
@@ -20,7 +20,7 @@ const commentsControllers = {
             }
             return res.status(200).json({
                 success: true,
-                message: `Postitusega ${id} seotud kommentaarid`,
+                message: `Postitusega ${postId} seotud kommentaarid`,
                 data: {
                     comments,
                 },
@@ -28,48 +28,46 @@ const commentsControllers = {
         } catch (error) {
             next(error)
         }
-    },*/
+    },
 
 
-    /*createComment: (req: Request, res: Response) => {
+    createComment: async (req: Request, res: Response) => {
         const { postId, content } = req.body;
-        let { userId } = req.body;
+        let userId = res.locals.user?.id || null;
         if (!postId || !content) {
-            return res.status(400).json({
-                success: false,
-                message: `Mingid andmed on puudu`,
-            });
+          return res.status(400).json({
+            success: false,
+            message: 'Osa andmevälju on puudu (postId, content)',
+          });
         }
-        if (!userId) userId = null;
-        const id = comments.length + 1;
-        const comment: IComment = {
-            id,
-            userId,
-            postId,
-            content,
+    
+        const newComment: IComment = {
+          userId,
+          postId,
+          content,
         };
-        comments.push(comment);
+    
+        const id: number = await commentsServices.createComment(newComment);
     
         return res.status(201).json({
-            success: true,
-            message: `Kommentaar IDga ${comment.id} loodud`,
+          success: true,
+          message: `Kommentaar IDga ${id} loodud`,
         });
-    },
-    deleteComment: (req: Request, res: Response) => {
-        const id = parseInt(req.params.id);
-        const index = comments.findIndex(element => element.id === id);
-        if (index === -1) {
-            return res.status(404).json({
-                success: false,
-                message: `Kommentaari ei leitud`,
-            });
+      },
+      deleteComment: async (req: Request, res: Response) => {
+        const id = parseInt(req.params.id, 10);
+        const result = await commentsServices.deleteComment(id);
+        if (!result) {
+          return res.status(404).json({
+            success: false,
+            message: 'Kommentaari ei leitud',
+          });
         }
-        comments.splice(index, 1);
         return res.status(200).json({
-            success: true,
-            message: `Kommentaar kustutatud`,
+          success: true,
+          message: 'Kommentaar kustutatud!',
         });
-    },*/
+      },
 
     getCommentByCommentId: async (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -78,7 +76,7 @@ const commentsControllers = {
             if (!comment) {
                 return res.status(404).json({
                     success: false,
-                    message: `Kommentaari ei leitud`,
+                    message: `c`,
                 });
             }
             return res.status(200).json({

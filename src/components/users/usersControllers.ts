@@ -1,106 +1,92 @@
 import { NextFunction, Request, Response } from "express";
-//import { users } from "../../mockData";
-import authServices from "../auth/authServices";
-import { IUser, INewUser, IUserWithoutRole, INewUserSQL } from "./usersInterfaces";
+import { IUserWithoutRole } from "./usersInterfaces";
 import usersServices from "./usersServices";
 
 const usersControllers = {
 
     //vaid admin näeb kõiki kasutajaid
-    getAllUsers: async (req: Request, res: Response, next: NextFunction): Promise<any> =>  {
-        const users = await usersServices.getAllUsers();
-        res.status(200).json({
-            success: true,
-            message: 'List of users',
-            users
-            
-        });
-      },
-    getUserById: async (req: Request, res: Response, next: NextFunction) => {
+    getAllUsers: async (req: Request, res: Response, next: NextFunction): Promise<any> => {
         try {
-            const id = parseInt(req.params.id, 10);
-            const user = await usersServices.findUserById(id);
-            console.log("getuserbyidcontroller:", user)
-            if (!user) throw new Error('User not found');
+            let users;
+            if (res.locals.user.role === 'admin') {
+              users = await usersServices.getAllUsers();
+            } else {
+              const { id } = res.locals.user;
+              users = usersServices.findUserById(id);
+            }
+      
             return res.status(200).json({
               success: true,
-              message: 'User',
-              data: {
-                user
-              }
+              message: 'List of users',
+              users,
             });
           } catch (error) {
             next(error);
           }
-        },
-
-        //ümber teha
-    /*deleteUser: (req: Request, res: Response) => {
-        const id = parseInt(req.params.id);
-        const result = usersServices.deleteUser(id);
-        const {role} = req.body;
-        if (role === "admin"){
-            if (!result) {
-                return res.status(404).json({
-                    success: false,
-                    message: 'Kasutajat ei leitud'
-                })
-            }
-            return res.status(201).json({
+    },
+    getUserById: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const id = parseInt(req.params.id, 10);
+            const user = await usersServices.findUserById(id);
+            if (!user) throw new Error('User not found');
+            return res.status(200).json({
                 success: true,
-                message: `Kasutaja kustutatud`
+                message: 'User',
+                data: {
+                    user
+                }
             });
-        } else {
-            return res.status(400).json({
-                success: false,
-                message: 'Kasutajaid saab vaid admin kustutada'
-            })
+        } catch (error) {
+            next(error);
         }
-    },*/
+    },
 
-    /*changeUserData: (req: Request, res: Response) => {
-        const id = parseInt(req.params.id);
-        const { firstName, lastName, email, password } = req.body;
-        const user = users.find(element => {
-            return element.id === id;
-        });
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                message: 'Kasutajat ei leitud'
-            })
+    deleteUser: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const id = parseInt(req.params.id, 10);
+            const user = await usersServices.findUserById(id);
+            if (!user) throw new Error('Kasutajat ei leitud');
+            const result = await usersServices.deleteUser(id);
+            if (!result) throw new Error('Kustutamine ei õnnestunud');
+            return res.status(200).json({
+                success: true,
+                message: 'Kasutaja kustutatud',
+            });
+        } catch (error) {
+            next(error);
         }
-        if (!firstName && !lastName && !email && !password) {
-            return res.status(400).json({
-                success: false,
-                message: 'Midagi pole muuta'
-            })
+    },
+
+    changeUserData: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const id = parseInt(req.params.id, 10);
+            const {
+                firstname, lastname, email, password,
+            } = req.body;
+
+            const user = await usersServices.findUserById(id);
+            if (!user) throw new Error('Kasutajat ei leitud');
+            if (!firstname && !lastname && !email && !password) throw new Error('Midagi pole muuta');
+
+            const userToUpdate: IUserWithoutRole = {
+                id,
+                firstname,
+                lastname,
+                email,
+                password,
+
+            };
+
+            const result = usersServices.changeUserData(userToUpdate);
+            if (!result) throw new Error('Midagi läks valesti');
+            return res.status(200).json({
+                success: true,
+                message: 'Kasutaja uuendatud',
+            });
+        } catch (error) {
+            next(error);
         }
-
-        const userToChangeData: IUserWithoutRole = {
-            id,
-            firstName,
-            lastName,
-            email,
-            password
-        }
-
-        usersServices.changeUserData(userToChangeData);
-
-
-
-        return res.status(200).json({
-            success: true,
-            message: `Kasutaja andmed muudetud`,
-            data: {
-                id: user.id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email
-            }
-        });
-        
-    }*/
+    },
 }
 
 

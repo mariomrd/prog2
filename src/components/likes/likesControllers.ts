@@ -1,93 +1,51 @@
-/*import { Request, Response } from "express";
-import { posts, users } from "../../mockData";
-import { IUserWithoutRole } from "../users/usersInterfaces";
+import { NextFunction, Request, Response } from "express";
+import pool from "../../database";
 
 const likesControllers = {
-    likePost: (req: Request, res: Response) => {
-        const id = parseInt(req.params.id);
-        const post = posts.find(element => {
-            return element.id === id;
-        });
-        if (!post) {
-            return res.status(404).json({
-                success: false,
-                message: 'Postitatud pilti ei leitud'
-            })
-        }
-        let user: IUserWithoutRole | undefined = users.find(element => element.id === post.userId);
-        if (!user) {
-            user = {
-                id: 0,
-                firstName: 'User missing',
-                lastName: 'User missing',
-                email: 'User missing',
-                password: 'User missing'
+    likePost: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const user = res.locals.user?.id;
+            const post = req.params.id;
+            if (!post) {
+                return res.status(404).json({
+                    success: false,
+                    message: `Postitust ei leitud`,
+                });
             }
-        }
-        post.score = post.score + 1
-        const postWithUserName = {
-            id: post.id,
-            title: post.title,
-            description: post.description,
-            picture: post.picture,
-            user: {
-                id: user.id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-            },
-            score: post.score,
-        }
-        return res.status(201).json({
-            success: true,
-            message: `Postitus IDga ${id} on leitud ning score++`,
-            data: {
-                post: postWithUserName
+            const addLike = {
+                post_id: post,
+                user_id: user,
+                creation_time: new Date().toISOString().slice(0, 19).replace('T', ' ')
             }
-        });
+            await pool.query('INSERT INTO liking SET ?;', addLike)
+            return res.status(200).json({
+                success: true,
+                message: `Postitus ${post} on meeldivaks märgitud`
+            });
+        } catch (error) {
+            next(error)
+        }
     },
-    disLikePost: (req: Request, res: Response) => {
-        const id = parseInt(req.params.id);
-        const post = posts.find(element => {
-            return element.id === id;
-        });
-        if (!post) {
-            return res.status(404).json({
-                success: false,
-                message: 'Postitatud pilti ei leitud'
-            })
-        }
-        let user: IUserWithoutRole | undefined = users.find(element => element.id === post.userId);
-        if (!user) {
-            user = {
-                id: 0,
-                firstName: 'User missing',
-                lastName: 'User missing',
-                email: 'User missing',
-                password: 'User missing'
+    unlikePost: async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const user = res.locals.user?.id;
+            const post = req.params.id;
+            if (!post) {
+                return res.status(404).json({
+                    success: false,
+                    message: `Postitust ei leitud`,
+                });
             }
+            await pool.query(`DELETE FROM liking WHERE post_id=${post} AND user_id=${user};`);
+            return res.status(200).json({
+                success: true,
+                message: `Postituse meeldivaks märkimine on eemaldatud`
+            });
+        } catch (error) {
+            next(error)
         }
-        const postWithUserName = {
-            id: post.id,
-            title: post.title,
-            description: post.description,
-            picture: post.picture,
-            user: {
-                id: user.id,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-            },
-            score: post.score - 1
-        }
-        return res.status(201).json({
-            success: true,
-            message: `Postitus IDga ${id} on leitud ning score--`,
-            data: {
-                post: postWithUserName
-            }
-        });
     }
+    
 }
 
-export default likesControllers;*/
+export default likesControllers;

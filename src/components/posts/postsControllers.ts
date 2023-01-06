@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import { FieldPacket, ResultSetHeader } from 'mysql2';
+import { RowDataPacket, FieldPacket, ResultSetHeader } from 'mysql2';
+import pool from "../../database";
 //import { posts, users } from "../../mockData";
 import { IUserWithoutRole } from "../users/usersInterfaces";
 import { INewPost, INewPostSQL, IPost, IPostSQL } from "./postsInterfaces";
@@ -19,7 +20,6 @@ const postsControllers = {
         try {
             const id = parseInt(req.params.id, 10);
             const post = await postsServices.findPostById(id);
-            //console.log("getuserPOSTidcontroller:", post)
             if (!post) throw new Error('Post not found');
             return res.status(200).json({
                 success: true,
@@ -34,7 +34,7 @@ const postsControllers = {
     },
     createPost: async (req: Request, res: Response) => {
         const {
-            title, description,} = req.body;
+            title, description, } = req.body;
         const userId = res.locals.user?.id;
         if (!title || !description || !userId) {
             return res.status(400).json({
@@ -54,58 +54,50 @@ const postsControllers = {
             message: `Post with id ${id} created`,
         });
     },
-
-    /*modifyPost: (req: Request, res: Response) => {
-        const id = parseInt(req.params.id);
-        const {title, description, picture} = req.body;
-        const post = posts.find(element => {
-            return element.id === id;
-        });
-        if (!post) {
-             return res.status(404).json({
+    deletePost: async (req: Request, res: Response) => {
+        const id = parseInt(req.params.id, 10);
+        const result = await postsServices.deletePost(id);
+        if (!result) {
+            return res.status(404).json({
                 success: false,
-                message: 'Postitust ei leitud'
-            })
+                message: 'Postitust ei leitud',
+            });
         }
-        if (!title && !description && !picture) {
-            return res.status(400).json({
-               success: false,
-               message: 'Midagi pole muuta'
-           })
-        }
-        if (title) post.title = title;
-        if (description) post.description = description;
-        if (picture) post.picture = picture;
-       
-     
-     
-        return res.status(201).json({
+        return res.status(200).json({
             success: true,
-            message: `postitus muudetud`,
-            data: {
-                id: post.id,
-                title: post.title,
-                description: post.description,
-                picture: post.picture,
-            }
+            message: 'Postitus kustutatud',
         });
     },
-    
-    deletePost: (req: Request, res: Response) => {
-        const id = parseInt(req.params.id);
-        const index = posts.findIndex(element => element.id === id);
-        if (index === -1) {
-             return res.status(404).json({
+    modifyPost: async (req: Request, res: Response) => {
+        const id = parseInt(req.params.id, 10);
+        const { title, description, location } = req.body;
+        const post = await postsServices.findPostById(id);
+        if (!post) {
+            return res.status(404).json({
                 success: false,
-                message: 'Postitust ei leitud'
-            })
+                message: 'Postitust ei leitud',
+            });
         }
-        posts.splice(index, 1);
-         return res.status(201).json({
+        if (!title && !description && !location) {
+            return res.status(400).json({
+                success: false,
+                message: 'Pole midagi muuta',
+            });
+        }
+        const postToUpdate: any = {
+            id,
+            title,
+            description,
+            location
+        };
+
+        await postsServices.modifyPost(postToUpdate);
+
+        return res.status(200).json({
             success: true,
-            message: `Postitus kustutatud`
+            message: 'Postitus uuendatud!',
         });
-    }
-    }*/
+    },
+
 };
 export default postsControllers;

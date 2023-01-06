@@ -1,7 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-//import { users } from "../../mockData";
-import authServices from "../auth/authServices";
-import { IUser, INewUser, IUserWithoutRole, INewUserSQL } from "../users/usersInterfaces";
+import { INewUser } from "../users/usersInterfaces";
 import registerServices from "./registerServices";
 
 const registerControllers = {

@@ -10,7 +10,7 @@ describe('Health controller', () => {
       expect(response.body).to.be.a('object');
       expect(response.statusCode).to.equal(200);
       expect(response.body.success).to.be.true;
-      expect(response.body.message).to.equal(`I'm healthy.`);
+      expect(response.body.message).to.equal(`API is healthy.`);
     });
   });
 });
