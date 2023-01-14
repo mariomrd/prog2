@@ -18,6 +18,21 @@ const postWithId = {
   id: 56
 };
 
+const postsToAdd = {
+  title: "test",
+  description: "test post",
+  location: "test location"
+}
+function postToModifyWithRandomString() {
+  let randomString = (Math.random() + 1).toString(36).substring(7);
+  const postToModify = {
+    title: `${randomString}`,
+    description: "test post modify"
+  }
+  return postToModify;
+}
+
+
 
 describe('Posts controller', () => {
   describe('GET /api/v1/posts', () => {
@@ -51,6 +66,43 @@ describe('Posts controller', () => {
 
   });
   describe('POST /api/v1/posts', () => {
-   
+    it('posts a postvand responds with status 201', async () => {
+      const login = await request(app).post('/api/v1/login').send(userAdmin);
+      const token = login.body.token;
+      const response = await request(app).post('/api/v1/posts/').set('Authorization', `Bearer ${token}`).send(postsToAdd);
+      expect(response.body).to.be.a('object');
+      expect(response.statusCode).to.equal(201);
+      expect(response.body.success).to.be.true;
+    });
+  });
+  describe('PATCH /api/v1/posts', () => {
+    it('modifies a post and responds with status 200', async () => {
+      const login = await request(app).post('/api/v1/login').send(userAdmin);
+      const token = login.body.token;
+      const response = await request(app).patch('/api/v1/posts/1').set('Authorization', `Bearer ${token}`).send(postToModifyWithRandomString());
+      expect(response.body).to.be.a('object');
+      expect(response.statusCode).to.equal(200);
+      expect(response.body.success).to.be.true;
+    });
+  });
+  describe('POST /api/v1/posts/:id/unlike', () => {
+    it('unlikes a post and responds with status 200', async () => {
+      const login = await request(app).post('/api/v1/login').send(userAdmin); //päring login endpointile
+      const token = login.body.token; //salvestan eraldi muutujasse tokeni
+      const response = await request(app).post('/api/v1/posts/1/unlike').set('Authorization', `Bearer ${token}`).send();// set käsuga seadistan headeri bearer tokeniga
+      expect(response.body).to.be.a('object');
+      expect(response.statusCode).to.equal(200);
+      expect(response.body.success).to.be.true;
+    });
+  });
+  describe('POST /api/v1/posts/:id/like', () => {
+    it('fails to like a post and responds with status 200', async () => {
+      const login = await request(app).post('/api/v1/login').send(userAdmin); //päring login endpointile
+      const token = login.body.token; //salvestan eraldi muutujasse tokeni
+      const response = await request(app).post('/api/v1/posts/1/like').set('Authorization', `Bearer ${token}`).send();// set käsuga seadistan headeri bearer tokeniga
+      expect(response.body).to.be.a('object');
+      expect(response.statusCode).to.equal(200);
+      expect(response.body.success).to.be.true;
+    });
   });
 });

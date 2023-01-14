@@ -1,10 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import commentsServices from "./commentsServices";
-import usersServices from "../users/usersServices";
-//import { comments, posts } from "../../mockData";
 import { IComment } from "./commentsInterfaces";
-import { IUser, IUserSQL } from "../users/usersInterfaces";
-import { RowDataPacket } from "mysql2";
 
 const commentsControllers = {
     getCommentsByPostId: async (req: Request, res: Response, next: NextFunction) => {
@@ -76,7 +72,7 @@ const commentsControllers = {
             if (!comment) {
                 return res.status(404).json({
                     success: false,
-                    message: `c`,
+                    message: `Kommentaari ei leitud`,
                 });
             }
             return res.status(200).json({

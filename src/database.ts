@@ -1,6 +1,4 @@
 import mysql from 'mysql2';
-import path from 'path';
-import fs from 'fs';
 import config from './apiConfig';
 
 const pool = mysql.createPool({

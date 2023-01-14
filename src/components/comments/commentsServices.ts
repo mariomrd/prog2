@@ -8,22 +8,22 @@ const commentsServices = {
     //leiab kõik kommentaarid
     getAllComments: async (): Promise<ICommentSQL[]> => {
         const [comments]: [ICommentSQL[], FieldPacket[]] = await pool.query(
-          `SELECT post_id, user_id, content FROM comment`
+          `SELECT postId, userId, content FROM comment`
           );
         return comments;
       },
       //leiab ühe useri kõik kommentaarid
       getAllCommentsFromUser: async (): Promise<ICommentSQL[]> => {
         const [comments]: [ICommentSQL[], FieldPacket[]] = await pool.query(
-          `SELECT post_id, user_id, content FROM comment
+          `SELECT postId, userId, content FROM comment
             INNER JOIN
-              user ON comment.user_id = user_id`
+              user ON comment.userId = userId`
           );
         return comments;
       },
       //kommentaari id järgi
-    commentById: async (id: number) => {
-      const [comment]: [ICommentSQL[], FieldPacket[]] = await pool.query(`SELECT id, post_id, user_id, content FROM comment WHERE id=?`, [id]);
+    commentById: async (commentId: number) => {
+      const [comment]: [ICommentSQL[], FieldPacket[]] = await pool.query(`SELECT commentId, postId, userId, content FROM comment WHERE commentId=?`, [commentId]);
       return comment[0];
   },
   createComment: async  (newComment: IComment): Promise<number> => {
@@ -33,8 +33,8 @@ const commentsServices = {
     const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('INSERT INTO comment SET ?;', [comment]);
     return result.insertId;
   },
-  deleteComment: async (id: number): Promise<Boolean> => {
-    const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('UPDATE comment SET deletedDate = ? WHERE id = ?;', [new Date().toISOString().slice(0, 19).replace('T', ' '), id]);
+  deleteComment: async (commentId: number): Promise<Boolean> => {
+    const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('UPDATE comment SET deletedDate = ? WHERE commentId = ?;', [new Date().toISOString().slice(0, 19).replace('T', ' '), commentId]);
     if (result.affectedRows < 1) {
       return false;
     }

@@ -8,18 +8,19 @@ const usersControllers = {
     getAllUsers: async (req: Request, res: Response, next: NextFunction): Promise<any> => {
         try {
             let users;
-            if (res.locals.user.role === 'admin') {
+            /* if (res.locals.user.role === 'admin' || 'user') {
               users = await usersServices.getAllUsers();
             } else {
               const { id } = res.locals.user;
               users = usersServices.findUserById(id);
-            }
-      
-            return res.status(200).json({
+            } */
+            users = await usersServices.getAllUsers();
+            /* return res.status(200).json({
               success: true,
               message: 'List of users',
               users,
-            });
+            }); */
+            res.send(users);
           } catch (error) {
             next(error);
           }

@@ -15,11 +15,23 @@ const userFake = {
 };
 
 const commentWithId = {
-  id: 136
+  commentId: 136
 };
 
 const commentWithIdDoesNotExist = {
-  id: 999999999
+  commentId: 999999999
+};
+const commentToAdd = {
+  postId: 1,
+  content: "add comments test",
+};
+
+const emptyComment = {
+
+}
+
+const commentToDelete = {
+  commentId: 2
 };
 
 
@@ -40,8 +52,8 @@ describe('Comments controller', () => {
     it('responds with one comment and status 200', async () => {
       const login = await request(app).post('/api/v1/login').send(userAdmin);
       const token = login.body.token;
-      const response = await request(app).get(`/api/v1/comments/${commentWithId.id}`).set('Authorization', `Bearer ${token}`);
-      expect(response.body).to.be.a('object'); 
+      const response = await request(app).get(`/api/v1/comments/${commentWithId.commentId}`).set('Authorization', `Bearer ${token}`);
+      expect(response.body).to.be.a('object');
       expect(response.statusCode).to.equal(200);
       expect(response.body.success).to.be.true;
       expect(response.body.data.comment).to.be.a("object");
@@ -50,11 +62,46 @@ describe('Comments controller', () => {
     it('responds with a message and status 404', async () => {
       const login = await request(app).post('/api/v1/login').send(userAdmin);
       const token = login.body.token;
-      const response = await request(app).get(`/api/v1/comments/${commentWithIdDoesNotExist.id}`).set('Authorization', `Bearer ${token}`);
-      expect(response.body).to.be.a('object'); 
+      const response = await request(app).get(`/api/v1/comments/${commentWithIdDoesNotExist.commentId}`).set('Authorization', `Bearer ${token}`);
+      expect(response.body).to.be.a('object');
       expect(response.statusCode).to.equal(404);
       expect(response.body.success).to.be.false;
       expect(response.body.message).to.equal("Kommentaari ei leitud");
     });
+  })
+  describe('POST /api/v1/comments', () => {
+    it('posts a comment and responds with status 201', async () => {
+      const login = await request(app).post('/api/v1/login').send(userAdmin); //päring login endpointile
+      const token = login.body.token; //salvestan eraldi muutujasse tokeni
+      const response = await request(app).post('/api/v1/comments/').set('Authorization', `Bearer ${token}`).send(commentToAdd);// set käsuga seadistan headeri bearer tokeniga
+      expect(response.body).to.be.a('object');
+      expect(response.statusCode).to.equal(201);
+      expect(response.body.success).to.be.true;
+    });
+    it('fails to post a comment and responds with status 400', async () => {
+      const login = await request(app).post('/api/v1/login').send(userAdmin); //päring login endpointile
+      const token = login.body.token; //salvestan eraldi muutujasse tokeni
+      const response = await request(app).post('/api/v1/comments/').set('Authorization', `Bearer ${token}`).send(emptyComment);// set käsuga seadistan headeri bearer tokeniga
+      expect(response.body).to.be.a('object');
+      expect(response.statusCode).to.equal(400);
+      expect(response.body.success).to.be.false;
+    });
+  })
+  describe('DELETE /api/v1/comments', () => {
+    it('fails to delete a comment and responds with status 404', async () => {
+      const login = await request(app).post('/api/v1/login').send(userAdmin); 
+      const token = login.body.token; 
+      const response = await request(app).delete('/api/v1/comments/').set('Authorization', `Bearer ${token}`).send(commentWithIdDoesNotExist);
+      expect(response.body).to.be.a('object');
+      expect(response.statusCode).to.equal(404);
+    });
+    /* it('deletes a comment and responds with status 200', async () => {
+      const login = await request(app).post('/api/v1/login').send(userAdmin); 
+      const token = login.body.token; 
+      await pool.query(`UPDATE comment SET deletedDate=NULL WHERE commentId=?`, [commentToDelete]);
+      const response = await request(app).delete('/api/v1/comments/').set('Authorization', `Bearer ${token}`).send(commentToDelete);
+      expect(response.body).to.be.a('object');
+      expect(response.statusCode).to.equal(200);
+    }); */
   })
 });
