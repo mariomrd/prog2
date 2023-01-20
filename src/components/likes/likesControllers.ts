@@ -36,7 +36,7 @@ const likesControllers = {
                     message: `Postitust ei leitud`,
                 });
             }
-            await pool.query(`DELETE FROM liking WHERE post_id=${post} AND user_id=${user};`);
+            await pool.query(`DELETE FROM liking WHERE post_id=? AND user_id=?;`, [post, user]);
             return res.status(200).json({
                 success: true,
                 message: `Postituse meeldivaks märkimine on eemaldatud`

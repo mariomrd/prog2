@@ -14,6 +14,7 @@ import authController from './components/auth/authControllers';
 import authMiddleware from './components/auth/authMiddlewares';
 import postsRoutes from './components/posts/postsRoutes';
 import registerRoutes from './components/register/registerRoutes';
+import statisticsRoutes from './components/statistics/statisticsRoutes';
 
 
 const app = express();
@@ -40,6 +41,7 @@ app.use(`${apiPath}/`, logger, generalRoutes);
 app.use(`${apiPath}/health`, logger, generalRoutes);
 app.use(`${apiPath}/register`, registerRoutes);
 app.use(`${apiPath}/users`, usersRoutes);
+app.use(`${apiPath}/statistics`, statisticsRoutes);
 /* app.use(`${apiPath}/login`, (req: Request, res: Response) => {
     if (req.session) {
         res.send({loggedIn: true})
