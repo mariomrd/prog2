@@ -19,6 +19,6 @@ export const errorHandler = (err: any, req: Request, res: Response, next: NextFu
   console.log(err);
   res.status(500).json({
     success: false,
-    message: err.message || 'Something broke!',
+    message: err.message || 'Katki läks',
   });
 };

@@ -6,7 +6,7 @@ import app from '../src/app';
 const registerNewUserCorrect = {
     firstName: "Test",
     lastName: "Subject",
-    email: 'juhan@tlu.ee',
+    email: 'juhanTest@tlu.ee',
     password: 'juhan123'
 };
 
@@ -48,9 +48,7 @@ describe('POST /api/v1/register', () => {
         expect(response.body.message).to.be.equal("Osa nõutavatest väljadest on puudu (firstName, lastName, email, password)")
       });
     it('responds with message User created and status 201', async () => {
-        const login = await request(app).post('/api/v1/login').send(registerNewUserCorrect);
-        const token = login.body.token;
-        const response = await request(app).post('/api/v1/register').set("Authorization", `Bearer ${token}`).send(registerNewUserCorrect);
+        const response = await request(app).post('/api/v1/register').send(registerNewUserCorrect);
         expect(response.body).to.be.a('object');
         expect(response.statusCode).to.equal(201);
         expect(response.body.success).to.true;
@@ -66,3 +64,5 @@ describe('POST /api/v1/register', () => {
         expect(response.body.message).to.be.equal("Palun sisesta korrektne e-mail aadress");
       }); 
 });
+
+export default registerNewUserCorrect;

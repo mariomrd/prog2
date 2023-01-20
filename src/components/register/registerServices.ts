@@ -1,9 +1,7 @@
 import { FieldPacket, ResultSetHeader } from 'mysql2';
 import pool from '../../database';
-//import { users } from "../../mockData";
 import authServices from "../auth/authServices";
-import usersServices from '../users/usersServices';
-import { INewUser, IUser, IUserWithoutRole, INewUserSQL, IUserSQL } from "../users/usersInterfaces";
+import { INewUser } from "../users/usersInterfaces";
 
 
 

@@ -1,9 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import { RowDataPacket, FieldPacket, ResultSetHeader } from 'mysql2';
-import pool from "../../database";
-//import { posts, users } from "../../mockData";
-import { IUserWithoutRole } from "../users/usersInterfaces";
-import { INewPost, INewPostSQL, IPost, IPostSQL } from "./postsInterfaces";
+import { INewPostSQL } from "./postsInterfaces";
 import postsServices from "./postsServices";
 
 const postsControllers = {

@@ -36,8 +36,8 @@ const usersServices = {
         return true;
       },
     getAllUsers: async () => {
-        const [users]: [IUserSQL[], FieldPacket[]] = await pool.query('SELECT id, firstname, lastname, email, role FROM user;');
-        return users;
+        const users: [IUserSQL[], FieldPacket[]] = await pool.query('SELECT id, firstname, lastname, email, role FROM user;');
+        return users[0];
     },
     deleteUser: async (id: number): Promise<Boolean> => {
         const [result]: [ResultSetHeader, FieldPacket[]] = await pool.query('UPDATE user SET deleted_date=? WHERE id=?;', [new Date(), id]);
